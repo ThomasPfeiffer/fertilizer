@@ -1,80 +1,113 @@
-function getIdForTableRow(tableRow) {
-  return "luegge_" + tableRow.getAttribute("id").split("_").pop();
+function findEntries() {
+  const tableRowElements = Array.from(
+    window.document.querySelectorAll(".day-view-entry")
+  );
+
+  return tableRowElements.map((tableRow) => {
+    const startTimeText = tableRow.querySelector(
+      ".entry-timestamp-start"
+    ).textContent;
+    const endTimeText = tableRow.querySelector(
+      ".entry-timestamp-end"
+    ).textContent;
+    return {
+      startMinute: parseMinutes(startTimeText),
+      endMinute: parseMinutes(endTimeText),
+      element: tableRow,
+      id: tableRow.id,
+    };
+  });
 }
 
-function addTableRowToTimesheet(elementToAppend, type) {
-  const trElem = document.createElement("tr");
-  trElem.setAttribute("colspan", "2");
-  trElem.setAttribute("id", getIdForTableRow(elementToAppend));
-  const tdInTr = document.createElement("td");
-  tdInTr.classList.add("lueggeBox-td");
-  tdInTr.setAttribute("colspan", "3");
-  const innerDivOfTr = document.createElement("div");
-  innerDivOfTr.classList.add("lueggebox-" + type);
-  innerDivOfTr.textContent = "ALAAAAAARRRRM!!";
-  innerDivOfTr.style.backgroundColor = "green";
-  trElem.append(tdInTr);
-  tdInTr.append(innerDivOfTr);
-
-  elementToAppend.before(trElem);
-  return trElem;
-}
-
-function getTime(element, name) {
-  const start = element.querySelector(".entry-timestamp-" + name).textContent;
-
-  const [hour, minute] = start.split(":");
-
+function parseMinutes(text) {
+  const [hour, minute] = text.split(":");
   return parseInt(hour) * 60 + parseInt(minute);
 }
 
-const markings = {};
+function addMarking(entry, text, color) {
+  const newRow = document.createElement("tr");
+  newRow.setAttribute("colspan", "100%");
+  newRow.setAttribute("id", idForEntryMarking(entry));
 
-function removeMarking(tablerow) {
-  const marking = document.getElementById(getIdForTableRow(tablerow));
-  if (marking) {
-    markings[tablerow.id].remove();
+  const newCell = document.createElement("td");
+  newCell.setAttribute("colspan", "100%");
+  newRow.append(newCell);
+
+  const innerDivOfTr = document.createElement("div");
+  innerDivOfTr.textContent = text;
+  innerDivOfTr.style.backgroundColor = color;
+  innerDivOfTr.style.padding = "5px";
+  newCell.append(innerDivOfTr);
+
+  entry.element.before(newRow);
+}
+
+function idForEntryMarking(entry) {
+  return "luegge_" + entry.id;
+}
+
+function findMarkingFor(entry) {
+  const id = idForEntryMarking(entry);
+  return document.getElementById(id);
+}
+
+function isMarked(entry) {
+  return Boolean(findMarkingFor(entry));
+}
+
+function removeMarking(entry) {
+  const marking = findMarkingFor(entry);
+  marking && marking.remove();
+}
+
+function compare(firstEntry, secondEntry) {
+  const timeDiff = secondEntry.startMinute - firstEntry.endMinute;
+  const isBreak = timeDiff > 1;
+
+  if (isBreak) {
+    return {
+      type: "break",
+      minutes: timeDiff,
+    };
   }
 
-  delete markings[tablerow.id];
+  const isOverlap = timeDiff < 0;
+
+  if (isOverlap) {
+    return {
+      type: "overlap",
+      minutes: -timeDiff,
+    };
+  }
+
+  return { type: "ok" };
 }
 
 const checkTimes = () => {
-  const entryTableRowElements =
-    window.document.querySelectorAll(".day-view-entry");
+  const entries = findEntries();
 
-  let previousEntryEnd;
+  entries.forEach((currentEntry, index) => {
+    const previousEntry = entries[index - 1];
 
-  entryTableRowElements.forEach((entryTableRowEl) => {
-    const timestampsWrapper =
-      entryTableRowEl.querySelector(".entry-timestamps");
-
-    const start = getTime(timestampsWrapper, "start");
-    if (previousEntryEnd) {
-      // const isÜberlappung = previousTimestampEnd > start;
-      // console.log("Überlappung");
-      // console.log(isÜberlappung, previousTimestampEnd, start);
-      //
-      const idForMarking = getIdForTableRow(entryTableRowEl);
-      const isMarked =
-        Object.keys(markings).includes(entryTableRowEl.id) &&
-        document.getElementById(getIdForTableRow(entryTableRowEl));
-
-      const isBreak = start - previousEntryEnd > 1;
-      if (isBreak && !isMarked) {
-        addTableRowToTimesheet(entryTableRowEl, "pause");
-        markings[entryTableRowEl.id] = idForMarking;
-      }
-      if (!isBreak && isMarked) {
-        removeMarking(entryTableRowEl);
-      }
-      if (!isBreak) {
-        delete markings[entryTableRowEl.id];
-      }
+    if (!previousEntry) {
+      return;
     }
 
-    const end = getTime(timestampsWrapper, "end");
-    previousEntryEnd = end;
+    const result = compare(previousEntry, currentEntry);
+
+    switch (result.type) {
+      case "break":
+        !isMarked(currentEntry) &&
+          addMarking(currentEntry, `${result.minutes}min Pause`, "green");
+        break;
+      case "overlap":
+        !isMarked(currentEntry) &&
+          addMarking(currentEntry, `${result.minutes}min Überlappung`, "red");
+        break;
+      case "ok":
+        removeMarking(currentEntry);
+        break;
+    }
   });
 };
 

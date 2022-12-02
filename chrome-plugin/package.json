@@ -1,0 +1,12 @@
+{
+  "name": "vanilla-webextension",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "web-ext run -t chromium --start-url \"chrome://extensions\" --source-dir ."
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "chrome-types": "^0.1.140",
+    "web-ext": "^7.3.0"
+  }
+}

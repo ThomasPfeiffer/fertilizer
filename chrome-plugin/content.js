@@ -1,5 +1,3 @@
-console.log("Content script loaded");
-
 function getIdForTableRow(tableRow) {
   return "luegge_" + tableRow.getAttribute("id").split("_").pop();
 }
@@ -13,7 +11,8 @@ function addTableRowToTimesheet(elementToAppend, type) {
   tdInTr.setAttribute("colspan", "3");
   const innerDivOfTr = document.createElement("div");
   innerDivOfTr.classList.add("lueggebox-" + type);
-  innerDivOfTr.textContent = "soos";
+  innerDivOfTr.textContent = "ALAAAAAARRRRM!!";
+  innerDivOfTr.style.backgroundColor = "green";
   trElem.append(tdInTr);
   tdInTr.append(innerDivOfTr);
 
@@ -31,24 +30,16 @@ function getTime(element, name) {
 
 const markings = {};
 
-function addMarking(tablerow) {
-  const markierung = document.createElement("div");
-  markierung.textContent = "ALAAAAAAAAARM";
-  tablerow.appendChild(markierung);
-  return markierung;
-}
-
 function removeMarking(tablerow) {
-  console.log("Removing mark for " + tablerow.id);
-  console.log(markings[tablerow.id]);
-  markings[tablerow.id].remove();
+  const marking = document.getElementById(getIdForTableRow(tablerow));
+  if (marking) {
+    markings[tablerow.id].remove();
+  }
 
   delete markings[tablerow.id];
 }
 
 const checkTimes = () => {
-  console.log(markings);
-  console.log("-----");
   const entryTableRowElements =
     window.document.querySelectorAll(".day-view-entry");
 
@@ -64,17 +55,21 @@ const checkTimes = () => {
       // console.log("Überlappung");
       // console.log(isÜberlappung, previousTimestampEnd, start);
       //
+      const idForMarking = getIdForTableRow(entryTableRowEl);
       const isMarked =
         Object.keys(markings).includes(entryTableRowEl.id) &&
-        markings[entryTableRowEl.id];
+        document.getElementById(getIdForTableRow(entryTableRowEl));
 
       const isBreak = start - previousEntryEnd > 1;
       if (isBreak && !isMarked) {
-        const markierung = addTableRowToTimesheet(entryTableRowEl, "pause");
-        markings[entryTableRowEl.id] = markierung;
+        addTableRowToTimesheet(entryTableRowEl, "pause");
+        markings[entryTableRowEl.id] = idForMarking;
       }
       if (!isBreak && isMarked) {
         removeMarking(entryTableRowEl);
+      }
+      if (!isBreak) {
+        delete markings[entryTableRowEl.id];
       }
     }
 
@@ -83,4 +78,4 @@ const checkTimes = () => {
   });
 };
 
-setInterval(() => checkTimes(), 5000);
+setInterval(() => checkTimes(), 500);

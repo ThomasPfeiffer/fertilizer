@@ -1,68 +1,86 @@
 console.log("Content script loaded");
 
-function run() {
-  const observer = new MutationObserver((mutation) => {
-    console.log("Mutation!");
-    // const dataIsland = window.document.querySelector("#timesheet-data-island");
-    const timesheetString = mutation.target.textContent;
-    const timesheet = JSON.parse(timesheetString);
-    console.log(timesheet.week_of);
-  });
-  observer.observe(document.getElementById("timesheet-data-island"), {
-    characterData: false,
-    attributes: false,
-    childList: true,
-    subtree: false,
-  });
+function getIdForTableRow(tableRow) {
+  return "luegge_" + tableRow.getAttribute("id").split("_").pop();
 }
 
-// Idee verworfen
-function getAllHtmlTimesheetEntries() {
-  const allTimesheets = document.getElementById("day-view-entries")
-  const tbody = allTimesheets.getElementsByTagName("tbody")[0]
+function addTableRowToTimesheet(elementToAppend, type) {
+  const trElem = document.createElement("tr");
+  trElem.setAttribute("colspan", "2");
+  trElem.setAttribute("id", getIdForTableRow(elementToAppend));
+  const tdInTr = document.createElement("td");
+  tdInTr.classList.add("lueggeBox-td");
+  tdInTr.setAttribute("colspan", "3");
+  const innerDivOfTr = document.createElement("div");
+  innerDivOfTr.classList.add("lueggebox-" + type);
+  innerDivOfTr.textContent = "soos";
+  trElem.append(tdInTr);
+  tdInTr.append(innerDivOfTr);
 
-  for(let i = 0; i < tbody.children.length - 1; ++i){
-    // const starttimeOfNextElem = tbody.children.item(i + 1).getElementsByClassName("entry-timestamp-start")[0].textContent
-    // const starttime = tbody.children.item(i).getElementsByClassName("entry-timestamp-start")[0].textContent
-
-
-  }
+  elementToAppend.before(trElem);
+  return trElem;
 }
 
-function addTableRowToTimesheet(elementToAppend, type){
-  const trElem = document.createElement("tr")
-  trElem.setAttribute("colspan", "2")
-  trElem.setAttribute("id", "luegge_" + elementToAppend.getAttribute("id").split('_').pop())
-  const tdInTr = document.createElement("td")
-  tdInTr.classList.add("lueggeBox-td")
-  tdInTr.setAttribute("colspan", "3")
-  const innerDivOfTr = document.createElement("div")
-  innerDivOfTr.classList.add("lueggebox-" + type)
-  innerDivOfTr.textContent = "soos"
-  trElem.append(tdInTr)
-  tdInTr.append(innerDivOfTr)
+function getTime(element, name) {
+  const start = element.querySelector(".entry-timestamp-" + name).textContent;
 
-  elementToAppend.after(trElem)
-  return trElem
+  const [hour, minute] = start.split(":");
+
+  return parseInt(hour) * 60 + parseInt(minute);
+}
+
+const markings = {};
+
+function addMarking(tablerow) {
+  const markierung = document.createElement("div");
+  markierung.textContent = "ALAAAAAAAAARM";
+  tablerow.appendChild(markierung);
+  return markierung;
+}
+
+function removeMarking(tablerow) {
+  console.log("Removing mark for " + tablerow.id);
+  console.log(markings[tablerow.id]);
+  markings[tablerow.id].remove();
+
+  delete markings[tablerow.id];
 }
 
 const checkTimes = () => {
-  const dataIsland = window.document.querySelector("#timesheet-data-island");
-  const timesheetString = dataIsland.textContent;
-  const timesheet = JSON.parse(timesheetString);
-  console.log(timesheet.week_of);
+  console.log(markings);
+  console.log("-----");
+  const entryTableRowElements =
+    window.document.querySelectorAll(".day-view-entry");
+
+  let previousEntryEnd;
+
+  entryTableRowElements.forEach((entryTableRowEl) => {
+    const timestampsWrapper =
+      entryTableRowEl.querySelector(".entry-timestamps");
+
+    const start = getTime(timestampsWrapper, "start");
+    if (previousEntryEnd) {
+      // const isÜberlappung = previousTimestampEnd > start;
+      // console.log("Überlappung");
+      // console.log(isÜberlappung, previousTimestampEnd, start);
+      //
+      const isMarked =
+        Object.keys(markings).includes(entryTableRowEl.id) &&
+        markings[entryTableRowEl.id];
+
+      const isBreak = start - previousEntryEnd > 1;
+      if (isBreak && !isMarked) {
+        const markierung = addTableRowToTimesheet(entryTableRowEl, "pause");
+        markings[entryTableRowEl.id] = markierung;
+      }
+      if (!isBreak && isMarked) {
+        removeMarking(entryTableRowEl);
+      }
+    }
+
+    const end = getTime(timestampsWrapper, "end");
+    previousEntryEnd = end;
+  });
 };
 
-setInterval(() => addTableRowToTimesheet(document.getElementById("timesheet_day_entry_1944091275"), "pause"), 1000);
-
-window.addEventListener(
-  "load",
-  function load(e) {
-    window.removeEventListener("load", load, false);
-    this.setTimeout(() => {
-      console.log("Registering Mutation observer");
-      run();
-    }, 3000);
-  },
-  false
-);
+setInterval(() => checkTimes(), 5000);

@@ -1,5 +1,5 @@
 {
-  "name": "vanilla-webextension",
+  "name": "fertilizer",
   "version": "1.0.0",
   "scripts": {
     "dev": "web-ext run -t chromium --start-url \"chrome://extensions\" --source-dir ."

@@ -1,30 +1,9 @@
-function findEntries() {
-  const tableRowElements = Array.from(
-    window.document.querySelectorAll(".day-view-entry")
-  );
+/* Validation error marking in DOM */
+function mark(entry, text, color) {
+  if (isMarked(entry)) {
+    return;
+  }
 
-  return tableRowElements.map((tableRow) => {
-    const startTimeText = tableRow.querySelector(
-      ".entry-timestamp-start"
-    ).textContent;
-    const endTimeText = tableRow.querySelector(
-      ".entry-timestamp-end"
-    ).textContent;
-    return {
-      startMinute: parseMinutes(startTimeText),
-      endMinute: parseMinutes(endTimeText),
-      element: tableRow,
-      id: tableRow.id,
-    };
-  });
-}
-
-function parseMinutes(text) {
-  const [hour, minute] = text.split(":");
-  return parseInt(hour) * 60 + parseInt(minute);
-}
-
-function addMarking(entry, text, color) {
   const newRow = document.createElement("tr");
   newRow.setAttribute("colspan", "100%");
   newRow.setAttribute("id", idForEntryMarking(entry));
@@ -55,11 +34,12 @@ function isMarked(entry) {
   return Boolean(findMarkingFor(entry));
 }
 
-function removeMarking(entry) {
+function unmark(entry) {
   const marking = findMarkingFor(entry);
   marking && marking.remove();
 }
 
+/* Timesheet Entry validation */
 function compare(firstEntry, secondEntry) {
   const timeDiff = secondEntry.startMinute - firstEntry.endMinute;
   const isBreak = timeDiff > 1;
@@ -83,9 +63,7 @@ function compare(firstEntry, secondEntry) {
   return { type: "ok" };
 }
 
-const checkTimes = () => {
-  const entries = findEntries();
-
+function processTimesheet(entries) {
   entries.forEach((currentEntry, index) => {
     const previousEntry = entries[index - 1];
 
@@ -97,18 +75,57 @@ const checkTimes = () => {
 
     switch (result.type) {
       case "break":
-        !isMarked(currentEntry) &&
-          addMarking(currentEntry, `${result.minutes}min Pause`, "green");
+        mark(currentEntry, `${result.minutes}min Pause`, "green");
         break;
       case "overlap":
-        !isMarked(currentEntry) &&
-          addMarking(currentEntry, `${result.minutes}min Überlappung`, "red");
+        mark(currentEntry, `${result.minutes}min Überlappung`, "red");
         break;
       case "ok":
-        removeMarking(currentEntry);
+        unmark(currentEntry);
         break;
     }
   });
-};
+}
 
-setInterval(() => checkTimes(), 500);
+/* DOM Queries */
+function findTimesheetElement() {
+  return document.getElementById("day-view-entries");
+}
+
+function findEntries() {
+  const tableRowElements = Array.from(
+    window.document.querySelectorAll(".day-view-entry")
+  );
+
+  return tableRowElements.map((tableRow) => {
+    const startTimeText = tableRow.querySelector(
+      ".entry-timestamp-start"
+    ).textContent;
+    const endTimeText = tableRow.querySelector(
+      ".entry-timestamp-end"
+    ).textContent;
+    return {
+      startMinute: parseMinutes(startTimeText),
+      endMinute: parseMinutes(endTimeText),
+      element: tableRow,
+      id: tableRow.id,
+    };
+  });
+}
+
+function parseMinutes(text) {
+  const [hour, minute] = text.split(":");
+  return parseInt(hour) * 60 + parseInt(minute);
+}
+
+/* Entrypoint */
+function initialize() {
+  const targetNode = findTimesheetElement();
+  const config = { attributes: true, childList: true, subtree: true };
+  const observer = new MutationObserver(() => {
+    const entries = findEntries();
+    processTimesheet(entries);
+  });
+  observer.observe(targetNode, config);
+}
+initialize();

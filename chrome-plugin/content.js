@@ -57,6 +57,26 @@ function unmark(entry) {
   marking && marking.remove();
 }
 
+function displayError() {
+  const id = "fertilizer-error-alert";
+  if (document.getElementById(id)) {
+    return;
+  }
+  const alert = document.createElement("div");
+  alert.id = id;
+  alert.style.position = "sticky";
+  alert.style.bottom = "20px";
+  alert.style.left = "20px";
+  alert.style.width = "350px";
+  alert.style.backgroundColor = "rgb(255 0 0 / 24%)";
+  alert.style.textAlign = "center";
+  alert.style.paddingTop = "1rem";
+  alert.style.paddingBottom = "1rem";
+  alert.style.borderRadius = "5px";
+  alert.textContent = "Achtung: Fertilizer funktioniert nicht mehr!";
+  document.body.appendChild(alert);
+}
+
 /* Timesheet Entry validation */
 
 function midnightAdjustment(entry) {
@@ -123,7 +143,11 @@ function processTimesheet(entries) {
 
 /* DOM Queries */
 function findTimesheetElement() {
-  return document.getElementById("day-view-entries");
+  const element = document.getElementById("day-view-entries");
+  if (element === null) {
+    throw new Error("Failed to find root element for timesheet");
+  }
+  return element;
 }
 
 function findEntries(timesheetElement) {
@@ -132,19 +156,29 @@ function findEntries(timesheetElement) {
   );
 
   return tableRowElements.map((tableRow) => {
-    const startTimeText = tableRow.querySelector(
-      ".entry-timestamp-start"
-    ).textContent;
-    const endTimeText = tableRow.querySelector(
-      ".entry-timestamp-end"
-    ).textContent;
+    function find(selector) {
+      const result = tableRow.querySelector(selector);
+      if (result === null) {
+        displayError();
+        throw Error("Failed to find timestamp elements in table row");
+      }
+      return result;
+    }
+    const startTimeText = find(".entry-timestamp-start").textContent;
+    const endTimeText = find(".entry-timestamp-end").textContent;
+
     return {
       startMinute: parseMinutes(startTimeText),
-      endMinute: parseMinutes(endTimeText),
+      endMinute: endTimeText ? parseMinutes(endTimeText) : currentMinutes(),
       element: tableRow,
       id: tableRow.id,
     };
   });
+}
+
+function currentMinutes() {
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes();
 }
 
 function parseMinutes(text) {
@@ -154,12 +188,17 @@ function parseMinutes(text) {
 
 /* Entrypoint */
 function initialize() {
-  const timesheetElement = findTimesheetElement();
-  const config = { attributes: true, childList: true, subtree: true };
-  const observer = new MutationObserver(() => {
-    const entries = findEntries(timesheetElement);
-    processTimesheet(entries);
-  });
-  observer.observe(timesheetElement, config);
+  try {
+    const timesheetElement = findTimesheetElement();
+    const config = { attributes: true, childList: true, subtree: true };
+    const observer = new MutationObserver(() => {
+      const entries = findEntries(timesheetElement);
+      processTimesheet(entries);
+    });
+    observer.observe(timesheetElement, config);
+  } catch (e) {
+    console.error("Fertilizer: ", e);
+    displayError();
+  }
 }
 initialize();

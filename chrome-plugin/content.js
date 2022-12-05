@@ -40,8 +40,19 @@ function unmark(entry) {
 }
 
 /* Timesheet Entry validation */
+
+function midnightAdjustment(entry) {
+  function passesMidnight(entry) {
+    return entry.endMinute < entry.startMinute;
+  }
+
+  return passesMidnight(entry) ? 1440 : 0;
+}
+
 function compare(firstEntry, secondEntry) {
-  const timeDiff = secondEntry.startMinute - firstEntry.endMinute;
+  const secondStart = secondEntry.startMinute + midnightAdjustment(secondEntry);
+  const firstEnd = firstEntry.endMinute + midnightAdjustment(firstEntry);
+  const timeDiff = secondStart - firstEnd;
   const isBreak = timeDiff > 1;
 
   if (isBreak) {

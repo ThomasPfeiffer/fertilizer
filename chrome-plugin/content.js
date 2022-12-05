@@ -10,15 +10,33 @@ function mark(entry, text, color) {
 
   const newCell = document.createElement("td");
   newCell.setAttribute("colspan", "100%");
+  newCell.style.padding = 0;
   newRow.append(newCell);
 
-  const innerDivOfTr = document.createElement("div");
-  innerDivOfTr.textContent = text;
-  innerDivOfTr.style.backgroundColor = color;
-  innerDivOfTr.style.padding = "5px";
-  newCell.append(innerDivOfTr);
+  const markingContainer = document.createElement("div");
+  markingContainer.style.backgroundColor = color;
+  markingContainer.style.padding = "0.5rem";
+  markingContainer.style.display = "flex";
+  newCell.append(markingContainer);
 
-  entry.element.before(newRow);
+  function createArrow() {
+    const arrow = document.createElement("span");
+    arrow.textContent = "↕️";
+    return arrow;
+  }
+
+  markingContainer.append(createArrow());
+
+  const markingElement = document.createElement("mark");
+  markingElement.textContent = text;
+  markingElement.style.flex = "1";
+  markingElement.style.textAlign = "center";
+  markingElement.style.backgroundColor = "unset";
+  markingContainer.append(markingElement);
+
+  markingContainer.append(createArrow());
+
+  entry.element.after(newRow);
 }
 
 function idForEntryMarking(entry) {
@@ -53,18 +71,15 @@ function compare(firstEntry, secondEntry) {
   const secondStart = secondEntry.startMinute + midnightAdjustment(secondEntry);
   const firstEnd = firstEntry.endMinute + midnightAdjustment(firstEntry);
   const timeDiff = secondStart - firstEnd;
-  const isBreak = timeDiff > 1;
 
-  if (isBreak) {
+  if (timeDiff > 1) {
     return {
       type: "break",
       minutes: timeDiff,
     };
   }
 
-  const isOverlap = timeDiff < 0;
-
-  if (isOverlap) {
+  if (timeDiff < 0) {
     return {
       type: "overlap",
       minutes: -timeDiff,
@@ -76,20 +91,28 @@ function compare(firstEntry, secondEntry) {
 
 function processTimesheet(entries) {
   entries.forEach((currentEntry, index) => {
-    const previousEntry = entries[index - 1];
+    const nextEntry = entries[index + 1];
 
-    if (!previousEntry) {
+    if (!nextEntry) {
       return;
     }
 
-    const result = compare(previousEntry, currentEntry);
+    const result = compare(currentEntry, nextEntry);
 
     switch (result.type) {
       case "break":
-        mark(currentEntry, `${result.minutes}min Pause`, "green");
+        mark(
+          currentEntry,
+          `${result.minutes} Minuten Pause`,
+          "rgb(142 223 142 / 37%)"
+        );
         break;
       case "overlap":
-        mark(currentEntry, `${result.minutes}min Überlappung`, "red");
+        mark(
+          currentEntry,
+          `${result.minutes} Minuten Überlappung`,
+          "rgb(255 0 0 / 24%)"
+        );
         break;
       case "ok":
         unmark(currentEntry);
@@ -103,9 +126,9 @@ function findTimesheetElement() {
   return document.getElementById("day-view-entries");
 }
 
-function findEntries() {
+function findEntries(timesheetElement) {
   const tableRowElements = Array.from(
-    window.document.querySelectorAll(".day-view-entry")
+    timesheetElement.querySelectorAll(".day-view-entry")
   );
 
   return tableRowElements.map((tableRow) => {
@@ -131,12 +154,12 @@ function parseMinutes(text) {
 
 /* Entrypoint */
 function initialize() {
-  const targetNode = findTimesheetElement();
+  const timesheetElement = findTimesheetElement();
   const config = { attributes: true, childList: true, subtree: true };
   const observer = new MutationObserver(() => {
-    const entries = findEntries();
+    const entries = findEntries(timesheetElement);
     processTimesheet(entries);
   });
-  observer.observe(targetNode, config);
+  observer.observe(timesheetElement, config);
 }
 initialize();

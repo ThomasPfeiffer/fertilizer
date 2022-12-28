@@ -1,9 +1,9 @@
 {
-  "name": "vite-web-extension",
+  "name": "fertilizer",
   "version": "1.0.0",
-  "displayName": "Vite Web Extension",
-  "author": "@samrum/vite-plugin-web-extension",
-  "description": "A @samrum/vite-plugin-web-extension web extension",
+  "displayName": "Fertilizer",
+  "author": "Thomas Pfeiffer",
+  "description": "Web extension to enhance Harvest UI",
   "scripts": {
     "build": "tsc && vite build",
     "watch": "vite build --watch",

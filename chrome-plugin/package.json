@@ -2,7 +2,7 @@
   "name": "fertilizer",
   "version": "1.0.0",
   "scripts": {
-    "dev": "web-ext run -t chromium --start-url \"chrome://extensions\" --source-dir ."
+    "dev": "web-ext run -t chromium --start-url \"https://lise.harvestapp.com/time\" --source-dir ."
   },
   "license": "ISC",
   "devDependencies": {

@@ -1,5 +1,5 @@
 /* Validation error marking in DOM */
-function mark(entry, text, color) {
+function mark(entry: Entry, text: string, color: string) {
   if (isMarked(entry)) {
     return;
   }
@@ -10,7 +10,7 @@ function mark(entry, text, color) {
 
   const newCell = document.createElement("td");
   newCell.setAttribute("colspan", "100%");
-  newCell.style.padding = 0;
+  newCell.style.padding = "0";
   newRow.append(newCell);
 
   const markingContainer = document.createElement("div");
@@ -39,20 +39,20 @@ function mark(entry, text, color) {
   entry.element.after(newRow);
 }
 
-function idForEntryMarking(entry) {
+function idForEntryMarking(entry: Entry) {
   return "luegge_" + entry.id;
 }
 
-function findMarkingFor(entry) {
+function findMarkingFor(entry: Entry) {
   const id = idForEntryMarking(entry);
   return document.getElementById(id);
 }
 
-function isMarked(entry) {
+function isMarked(entry: Entry) {
   return Boolean(findMarkingFor(entry));
 }
 
-function unmark(entry) {
+function unmark(entry: Entry) {
   const marking = findMarkingFor(entry);
   marking && marking.remove();
 }
@@ -79,15 +79,15 @@ function displayError() {
 
 /* Timesheet Entry validation */
 
-function midnightAdjustment(entry) {
-  function passesMidnight(entry) {
+function midnightAdjustment(entry: Entry) {
+  function passesMidnight(entry: Entry) {
     return entry.endMinute < entry.startMinute;
   }
 
   return passesMidnight(entry) ? 1440 : 0;
 }
 
-function compare(firstEntry, secondEntry) {
+function compare(firstEntry: Entry, secondEntry: Entry) {
   const secondStart = secondEntry.startMinute + midnightAdjustment(secondEntry);
   const firstEnd = firstEntry.endMinute + midnightAdjustment(firstEntry);
   const timeDiff = secondStart - firstEnd;
@@ -109,7 +109,7 @@ function compare(firstEntry, secondEntry) {
   return { type: "ok" };
 }
 
-function processTimesheet(entries) {
+function processTimesheet(entries: Entry[]) {
   entries.forEach((currentEntry, index) => {
     const nextEntry = entries[index + 1];
 
@@ -150,22 +150,22 @@ function findTimesheetElement() {
   return element;
 }
 
-function findEntries(timesheetElement) {
+function findEntries(timesheetElement: HTMLElement) {
   const tableRowElements = Array.from(
     timesheetElement.querySelectorAll(".day-view-entry")
   );
 
   return tableRowElements.map((tableRow) => {
-    function find(selector) {
+    function find(selector: string) {
       const result = tableRow.querySelector(selector);
-      if (result === null) {
+      if (result === null || result.textContent === null) {
         displayError();
         throw Error("Failed to find timestamp elements in table row");
       }
-      return result;
+      return result.textContent;
     }
-    const startTimeText = find(".entry-timestamp-start").textContent;
-    const endTimeText = find(".entry-timestamp-end").textContent;
+    const startTimeText = find(".entry-timestamp-start");
+    const endTimeText = find(".entry-timestamp-end");
 
     return {
       startMinute: parseMinutes(startTimeText),
@@ -181,7 +181,7 @@ function currentMinutes() {
   return now.getHours() * 60 + now.getMinutes();
 }
 
-function parseMinutes(text) {
+function parseMinutes(text: string) {
   const [hour, minute] = text.split(":");
   return parseInt(hour) * 60 + parseInt(minute);
 }
@@ -200,4 +200,11 @@ export function initialize() {
     console.error("Fertilizer: ", e);
     displayError();
   }
+}
+
+interface Entry {
+  startMinute: number;
+  endMinute: number;
+  element: Element;
+  id: string;
 }

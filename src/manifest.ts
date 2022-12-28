@@ -1,4 +1,4 @@
-import pkg from "../package.json";
+import pkg from "../package.json"
 
 const sharedManifest = {
   author: pkg.author,
@@ -24,7 +24,7 @@ const sharedManifest = {
     512: "icons/512.png",
   },
   permissions: [],
-} satisfies Partial<chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3>;
+} satisfies Partial<chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3>
 
 const browserAction = {
   default_icon: {
@@ -33,27 +33,24 @@ const browserAction = {
     32: "icons/32.png",
     38: "icons/38.png",
   },
-  default_popup: "src/entries/popup/index.html",
-};
+}
 
 const ManifestV2 = {
   browser_action: browserAction,
-} satisfies Partial<chrome.runtime.ManifestV3>;
+} satisfies Partial<chrome.runtime.ManifestV3>
 
 const ManifestV3 = {
   action: browserAction,
   host_permissions: ["*://*/*"],
-} satisfies Partial<chrome.runtime.ManifestV3>;
+} satisfies Partial<chrome.runtime.ManifestV3>
 
-export function getManifest(
-  manifestVersion: number
-): chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3 {
+export function getManifest(manifestVersion: number): chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3 {
   if (manifestVersion === 2) {
     return {
       ...sharedManifest,
       ...ManifestV2,
       manifest_version: manifestVersion,
-    };
+    }
   }
 
   if (manifestVersion === 3) {
@@ -61,10 +58,8 @@ export function getManifest(
       ...sharedManifest,
       ...ManifestV3,
       manifest_version: manifestVersion,
-    };
+    }
   }
 
-  throw new Error(
-    `Missing manifest definition for manifestVersion ${manifestVersion}`
-  );
+  throw new Error(`Missing manifest definition for manifestVersion ${manifestVersion}`)
 }

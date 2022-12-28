@@ -3,28 +3,44 @@ import { ValidationResult } from "./ValidationResult"
 
 export function markResults(results: ValidationResult[]) {
   results.forEach((result) => {
-    switch (result.type) {
+    switch (result.gap.type) {
       case "break":
-        mark(result.entry, `${result.minutes} Minuten Pause`, "rgb(142 223 142 / 37%)")
+        markGap(result.entry, `${result.gap.minutes} Minuten Pause`, "rgb(142 223 142 / 37%)")
         break
       case "overlap":
-        mark(result.entry, `${result.minutes} Minuten Überlappung`, "rgb(255 0 0 / 24%)")
+        markGap(result.entry, `${result.gap.minutes} Minuten Überlappung`, "rgb(255 0 0 / 24%)")
         break
       case "ok":
-        unmark(result.entry)
+        unmarkGap(result.entry)
+        break
+    }
+    switch (result.note.type) {
+      case "missing":
+        markEntry(result.entry)
+        break
+      case "ok":
+        unmarkEntry(result.entry)
         break
     }
   })
 }
 
-export function mark(entry: TimesheetEntry, text: string, color: string) {
-  if (isMarked(entry)) {
+function markEntry(entry: TimesheetEntry) {
+  entry.element.style.backgroundColor = "rgb(166 166 166 / 25%)"
+}
+
+function unmarkEntry(entry: TimesheetEntry) {
+  entry.element.style.backgroundColor = ""
+}
+
+function markGap(entry: TimesheetEntry, text: string, color: string) {
+  if (hasGapMarking(entry)) {
     return
   }
 
   const newRow = document.createElement("tr")
   newRow.setAttribute("colspan", "100%")
-  newRow.setAttribute("id", idForEntryMarking(entry))
+  newRow.setAttribute("id", idForGapMarking(entry))
 
   const newCell = document.createElement("td")
   newCell.setAttribute("colspan", "100%")
@@ -57,20 +73,19 @@ export function mark(entry: TimesheetEntry, text: string, color: string) {
   entry.element.after(newRow)
 }
 
-function idForEntryMarking(entry: TimesheetEntry) {
+function idForGapMarking(entry: TimesheetEntry) {
   return "luegge_" + entry.id
 }
 
-function findMarkingFor(entry: TimesheetEntry) {
-  const id = idForEntryMarking(entry)
+function findGapMarking(entry: TimesheetEntry) {
+  const id = idForGapMarking(entry)
   return document.getElementById(id)
 }
 
-function isMarked(entry: TimesheetEntry) {
-  return Boolean(findMarkingFor(entry))
+function hasGapMarking(entry: TimesheetEntry) {
+  return Boolean(findGapMarking(entry))
 }
 
-export function unmark(entry: TimesheetEntry) {
-  const marking = findMarkingFor(entry)
-  marking && marking.remove()
+function unmarkGap(entry: TimesheetEntry) {
+  findGapMarking(entry)?.remove()
 }

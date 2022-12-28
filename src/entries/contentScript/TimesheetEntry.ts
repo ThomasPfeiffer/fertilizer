@@ -1,8 +1,9 @@
-import { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs"
 
 export interface TimesheetEntry {
-  start: Dayjs;
-  end: Dayjs | null;
-  element: Element;
-  id: string;
+  start: Dayjs
+  end: Dayjs | null
+  hasNote: boolean
+  element: HTMLElement
+  id: string
 }

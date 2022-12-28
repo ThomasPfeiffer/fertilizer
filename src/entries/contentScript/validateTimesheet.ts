@@ -1,37 +1,37 @@
 import { TimesheetEntry } from "./TimesheetEntry"
-import { ValidationResult } from "./ValidationResult"
+import { TimesheetEntryGap, TimesheetEntryNote, ValidationResult } from "./ValidationResult"
 
 export function validateEntries(entries: TimesheetEntry[]): ValidationResult[] {
   return entries.map((currentEntry, index) => {
-    const nextEntry = entries[index + 1]
+    const gap = validateGap(currentEntry, entries[index + 1])
+    const note: TimesheetEntryNote = currentEntry.hasNote ? { type: "ok" } : { type: "missing" }
 
-    if (!nextEntry) {
-      return { type: "ok", entry: currentEntry }
+    return {
+      entry: currentEntry,
+      gap,
+      note,
     }
-    return validateGap(currentEntry, nextEntry)
   })
 }
 
-function validateGap(firstEntry: TimesheetEntry, secondEntry: TimesheetEntry): ValidationResult {
-  if (!firstEntry.end) return { type: "ok", entry: firstEntry }
+function validateGap(firstEntry: TimesheetEntry, secondEntry?: TimesheetEntry): TimesheetEntryGap {
+  if (!secondEntry || !firstEntry.end) return { type: "ok" }
 
-  const timeDiff = firstEntry.end.diff(secondEntry.start, "minutes")
-
-  if (timeDiff > 1) {
-    return {
-      type: "break",
-      minutes: timeDiff,
-      entry: firstEntry,
-    }
-  }
+  const timeDiff = secondEntry.start.diff(firstEntry.end, "minutes")
 
   if (timeDiff < -1) {
     return {
       type: "overlap",
       minutes: -timeDiff,
-      entry: firstEntry,
     }
   }
 
-  return { type: "ok", entry: firstEntry }
+  if (timeDiff > 1) {
+    return {
+      type: "break",
+      minutes: timeDiff,
+    }
+  }
+
+  return { type: "ok" }
 }

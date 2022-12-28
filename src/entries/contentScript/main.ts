@@ -5,14 +5,7 @@ import { markResults } from "./markValidationResults"
 import { validateEntries as validateTimesheet } from "./validateTimesheet"
 
 dayjs.extend(customParseFormat)
-
 initialize()
-
-function onChange() {
-  const entries = findTimesheetEntries()
-  const results = validateTimesheet(entries)
-  markResults(results)
-}
 
 function initialize() {
   try {
@@ -26,6 +19,12 @@ function initialize() {
     console.error("Fertilizer: ", e)
     displayError()
   }
+}
+
+function onChange() {
+  const entries = findTimesheetEntries()
+  const results = validateTimesheet(entries)
+  markResults(results)
 }
 
 function displayError() {

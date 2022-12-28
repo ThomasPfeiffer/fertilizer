@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc && vite build",
     "watch": "vite build --watch",
-    "dev": "vite",
+    "dev": "run-p dev:vite serve:chrome",
+    "dev:vite": "vite",
     "serve:firefox": "web-ext run --start-url \"https://lise.harvestapp.com/time\"  --source-dir ./dist/",
     "serve:chrome": "web-ext run -t chromium --start-url \"https://lise.harvestapp.com/time\" --source-dir ./dist/"
   },
@@ -16,6 +17,7 @@
     "@samrum/vite-plugin-web-extension": "^2.0.0",
     "@types/chrome": "^0.0.196",
     "@types/webextension-polyfill": "^0.9.0",
+    "npm-run-all": "^4.1.5",
     "typescript": "^4.9.0",
     "vite": "~3.1.0",
     "web-ext": "^7.2.0"

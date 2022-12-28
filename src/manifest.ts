@@ -7,7 +7,7 @@ const sharedManifest = {
   version: pkg.version,
   content_scripts: [
     {
-      js: ["src/entries/contentScript/primary/main.ts"],
+      js: ["src/entries/contentScript/main.ts"],
       matches: ["https://*.harvestapp.com/time/*"],
     },
   ],

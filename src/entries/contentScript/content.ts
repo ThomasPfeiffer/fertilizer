@@ -190,6 +190,8 @@ function parseMinutes(text: string) {
 export function initialize() {
   try {
     const timesheetElement = findTimesheetElement();
+    const entries = findEntries(timesheetElement);
+    processTimesheet(entries);
     const config = { attributes: true, childList: true, subtree: true };
     const observer = new MutationObserver(() => {
       const entries = findEntries(timesheetElement);

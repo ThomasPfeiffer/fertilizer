@@ -187,7 +187,7 @@ function parseMinutes(text) {
 }
 
 /* Entrypoint */
-function initialize() {
+export function initialize() {
   try {
     const timesheetElement = findTimesheetElement();
     const config = { attributes: true, childList: true, subtree: true };
@@ -201,4 +201,3 @@ function initialize() {
     displayError();
   }
 }
-initialize();

@@ -41,7 +41,7 @@ const ManifestV2 = {
 
 const ManifestV3 = {
   action: browserAction,
-  host_permissions: ["*://*/*"],
+  host_permissions: [],
 } satisfies Partial<chrome.runtime.ManifestV3>
 
 export function getManifest(manifestVersion: number): chrome.runtime.ManifestV2 | chrome.runtime.ManifestV3 {

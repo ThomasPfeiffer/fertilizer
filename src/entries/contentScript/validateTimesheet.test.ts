@@ -89,3 +89,15 @@ describe("Missing notes", () => {
     expect(result[0].note.type).toBe("ok")
   })
 })
+
+describe("Order of timesheet entries", () => {
+  it("Should process entries sorted by their start timestamp", () => {
+    const entry1 = entryWithTimes("17:00", "19:00")
+    const entry2 = entryWithTimes("16:00", "18:00")
+
+    const result = validateEntries([entry1, entry2])
+
+    expect(result[0].gap.type).toBe("overlap")
+    expect((result[0].gap as TimesheetEntryOverlap).minutes).toBe(60)
+  })
+})

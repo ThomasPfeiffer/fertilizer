@@ -2,16 +2,19 @@ import { TimesheetEntry } from "./TimesheetEntry"
 import { TimesheetEntryGap, TimesheetEntryNote, ValidationResult } from "./ValidationResult"
 
 export function validateEntries(entries: TimesheetEntry[]): ValidationResult[] {
-  return entries.map((currentEntry, index) => {
-    const gap = validateGap(currentEntry, entries[index + 1])
-    const note: TimesheetEntryNote = currentEntry.hasNote ? { type: "ok" } : { type: "missing" }
+  return entries
+    .slice()
+    .sort((a, b) => a.start.diff(b.start))
+    .map((currentEntry, index, entries) => {
+      const gap = validateGap(currentEntry, entries[index + 1])
+      const note: TimesheetEntryNote = currentEntry.hasNote ? { type: "ok" } : { type: "missing" }
 
-    return {
-      entry: currentEntry,
-      gap,
-      note,
-    }
-  })
+      return {
+        entry: currentEntry,
+        gap,
+        note,
+      }
+    })
 }
 
 function validateGap(firstEntry: TimesheetEntry, secondEntry?: TimesheetEntry): TimesheetEntryGap {

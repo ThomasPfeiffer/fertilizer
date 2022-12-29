@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.2.0"
+          cache: "npm"
+      - run: npm ci
+      - run: npm version ${{github.ref_name}} --allow-same-version true --git-tag-version false
+      - run: npm run build
+        env:
+          MANIFEST_VERSION: 2
+      - run: mkdir releases
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "zip"
+          filename: "../releases/${{github.ref_name}}-manifest-v2.zip"
+          directory: "dist"
+      - run: npm run build
+        env:
+          MANIFEST_VERSION: 3
+      - name: Archive Release
+        uses: thedoctor0/zip-release@main
+        with:
+          type: "zip"
+          filename: "../releases/${{github.ref_name}}-manifest-v3.zip"
+          directory: "dist"
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "releases/*"

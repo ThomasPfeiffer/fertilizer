@@ -22,13 +22,18 @@ describe("Timestamps", () => {
     const entries = findTimesheetEntries()
 
     expect(entries[0].end!.isSame(todayAt(9, 0))).toBe(true)
-    expect(entries[1].end!.isSame(todayAt(10, 30))).toBe(true)
   })
 
   it("recognizes entries that pass midnight", () => {
     const entries = findTimesheetEntries()
 
     expect(entries[2].end!.isSame(todayAt(2, 0).add(1, "days"))).toBe(true)
+  })
+
+  it("uses 'now' as end when there is no end timestamp'", () => {
+    const entries = findTimesheetEntries()
+
+    expect(entries[1].end!.isSame(dayjs())).toBe(true)
   })
 })
 
@@ -71,7 +76,7 @@ const testPage = `
         <div class="day-entry-with-timestamps">
           <div class="entry-timestamps">
             <span class="entry-timestamp-start">9:00</span>
-            <span class="entry-timestamp-end">10:30</span>
+            <span class="entry-timestamp-end"></span>
           </div>
 
           <div class="entry-details">

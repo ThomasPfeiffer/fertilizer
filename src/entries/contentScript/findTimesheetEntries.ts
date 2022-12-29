@@ -33,8 +33,8 @@ export function findTimesheetEntries(): TimesheetEntry[] {
     const endTimeText = findTextContent(tableRow, ".entry-timestamp-end")
 
     const start = parseTime(startTimeText)
-    const endToday = endTimeText ? parseTime(endTimeText) : null
-    const end = endToday !== null && endToday.isBefore(start) ? endToday.add(1, "days") : endToday
+    const endToday = endTimeText ? parseTime(endTimeText) : dayjs()
+    const end = endToday.isBefore(start) ? endToday.add(1, "days") : endToday
 
     return {
       hasNote,

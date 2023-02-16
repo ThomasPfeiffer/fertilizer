@@ -15,6 +15,7 @@ function initialize() {
       onChange()
     })
     observer.observe(document, config)
+    console.log("Fertilizer active 🪴")
   } catch (e) {
     console.error("Fertilizer: ", e)
     displayError()

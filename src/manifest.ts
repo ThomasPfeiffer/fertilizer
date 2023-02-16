@@ -8,7 +8,7 @@ const sharedManifest = {
   content_scripts: [
     {
       js: ["src/entries/contentScript/main.ts"],
-      matches: ["https://*.harvestapp.com/time/day/*"],
+      matches: ["https://*.harvestapp.com/*"],
     },
   ],
   icons: {

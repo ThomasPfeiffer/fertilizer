@@ -18,7 +18,6 @@ function initialize() {
     console.log("Fertilizer active 🪴")
   } catch (e) {
     console.error("Fertilizer: ", e)
-    displayError()
   }
 }
 
@@ -26,24 +25,4 @@ function onChange() {
   const entries = findTimesheetEntries()
   const results = validateTimesheet(entries)
   markResults(results)
-}
-
-function displayError() {
-  const id = "fertilizer-error-alert"
-  if (document.getElementById(id)) {
-    return
-  }
-  const alert = document.createElement("div")
-  alert.id = id
-  alert.style.position = "sticky"
-  alert.style.bottom = "20px"
-  alert.style.left = "20px"
-  alert.style.width = "350px"
-  alert.style.backgroundColor = "rgb(255 0 0 / 24%)"
-  alert.style.textAlign = "center"
-  alert.style.paddingTop = "1rem"
-  alert.style.paddingBottom = "1rem"
-  alert.style.borderRadius = "5px"
-  alert.textContent = "Achtung: Fertilizer funktioniert nicht mehr!"
-  document.body.appendChild(alert)
 }

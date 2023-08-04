@@ -1,8 +1,9 @@
+import { Timesheet } from "./Timesheet"
 import { TimesheetEntry } from "./TimesheetEntry"
 import { TimesheetEntryGap, TimesheetEntryNote, ValidationResult } from "./ValidationResult"
 
-export function validateEntries(entries: TimesheetEntry[]): ValidationResult[] {
-  return entries
+export function validateTimesheet(timesheet: Timesheet): ValidationResult[] {
+  return timesheet.entries
     .slice()
     .sort((a, b) => a.start.diff(b.start))
     .map((currentEntry, index, entries) => {

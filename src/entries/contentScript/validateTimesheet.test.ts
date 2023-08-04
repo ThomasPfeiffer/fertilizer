@@ -1,6 +1,6 @@
 import { TimesheetEntry } from "./TimesheetEntry"
 import dayjs from "dayjs"
-import { validateEntries } from "./validateTimesheet"
+import { validateTimesheet } from "./validateTimesheet"
 import { TimesheetEntryBreak, TimesheetEntryOverlap } from "./ValidationResult"
 
 const div = document.createElement("div")
@@ -29,7 +29,7 @@ describe("Overlaps", () => {
     const entry1 = entryWithTimes("16:00", "18:00")
     const entry2 = entryWithTimes("17:00", "19:00")
 
-    const result = validateEntries([entry1, entry2])
+    const result = validateTimesheet({ entries: [entry1, entry2] })
 
     expect(result[0].gap.type).toBe("overlap")
     expect((result[0].gap as TimesheetEntryOverlap).minutes).toBe(60)
@@ -39,7 +39,7 @@ describe("Overlaps", () => {
     const entry1 = entryWithTimes("16:00", "17:00")
     const entry2 = entryWithTimes("17:00", "18:00")
 
-    const result = validateEntries([entry1, entry2])
+    const result = validateTimesheet({ entries: [entry1, entry2] })
 
     expect(result[0].gap.type).toBe("ok")
   })
@@ -50,7 +50,7 @@ describe("Breaks", () => {
     const entry1 = entryWithTimes("16:00", "17:00")
     const entry2 = entryWithTimes("17:30", "19:00")
 
-    const result = validateEntries([entry1, entry2])
+    const result = validateTimesheet({ entries: [entry1, entry2] })
 
     expect(result[0].gap.type).toBe("break")
     expect((result[0].gap as TimesheetEntryBreak).minutes).toBe(30)
@@ -60,7 +60,7 @@ describe("Breaks", () => {
     const entry1 = entryWithTimes("16:00", "17:00")
     const entry2 = entryWithTimes("17:01", "18:00")
 
-    const result = validateEntries([entry1, entry2])
+    const result = validateTimesheet({ entries: [entry1, entry2] })
 
     expect(result[0].gap.type).toBe("ok")
   })
@@ -73,7 +73,7 @@ describe("Missing notes", () => {
       hasNote: false,
     }
 
-    const result = validateEntries([entry])
+    const result = validateTimesheet({ entries: [entry] })
 
     expect(result[0].note.type).toBe("missing")
   })
@@ -84,7 +84,7 @@ describe("Missing notes", () => {
       hasNote: true,
     }
 
-    const result = validateEntries([entry])
+    const result = validateTimesheet({ entries: [entry] })
 
     expect(result[0].note.type).toBe("ok")
   })
@@ -95,7 +95,7 @@ describe("Order of timesheet entries", () => {
     const entry1 = entryWithTimes("17:00", "19:00")
     const entry2 = entryWithTimes("16:00", "18:00")
 
-    const result = validateEntries([entry1, entry2])
+    const result = validateTimesheet({ entries: [entry1, entry2] })
 
     expect(result[0].gap.type).toBe("overlap")
     expect((result[0].gap as TimesheetEntryOverlap).minutes).toBe(60)

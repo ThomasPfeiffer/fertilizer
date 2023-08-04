@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
-import { TimesheetEntry } from "./TimesheetEntry"
 import { parseTime } from "./parseTime"
+import { Timesheet } from "./Timesheet"
 
 function findTimesheetElement() {
   const element = document.getElementById("day-view-entries")
@@ -18,12 +18,12 @@ function findTextContent(tableRow: HTMLElement, selector: string) {
   return result.textContent
 }
 
-export function findTimesheetEntries(): TimesheetEntry[] {
+export function findTimesheetInTimeView(): Timesheet {
   const timesheetElement = findTimesheetElement()
 
   const tableRowElements = Array.from(timesheetElement.querySelectorAll<HTMLElement>(".day-view-entry"))
 
-  return tableRowElements.map((tableRow) => {
+  const entries = tableRowElements.map((tableRow) => {
     const hasNote = tableRow.querySelector(".notes") !== null
 
     const startTimeText = findTextContent(tableRow, ".entry-timestamp-start")
@@ -41,4 +41,6 @@ export function findTimesheetEntries(): TimesheetEntry[] {
       id: `FertilizerEntry${tableRow.id}`,
     }
   })
+
+  return { entries }
 }

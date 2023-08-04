@@ -1,8 +1,9 @@
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import dayjs from "dayjs"
-import { findTimesheetEntries } from "./findTimeViewEntries"
+import { findTimesheetInTimeView } from "./findTimesheetInTimeView"
 import { markResults } from "./markValidationResults"
-import { validateEntries as validateTimesheet } from "./validateTimesheet"
+import { validateTimesheet } from "./validateTimesheet"
+import { findTimesheetsInTeamView } from "./findTimesheetsInTeamView"
 
 dayjs.extend(customParseFormat)
 initialize()
@@ -22,7 +23,16 @@ function initialize() {
 }
 
 function onChange() {
-  const entries = findTimesheetEntries()
-  const results = validateTimesheet(entries)
-  markResults(results)
+  const timesheets = findTimeSheets()
+  timesheets.forEach((timesheet) => {
+    const results = validateTimesheet(timesheet)
+    markResults(results)
+  })
+}
+
+function findTimeSheets() {
+  if (window.location.pathname.startsWith("/team")) {
+    return findTimesheetsInTeamView()
+  }
+  return [findTimesheetInTimeView()]
 }

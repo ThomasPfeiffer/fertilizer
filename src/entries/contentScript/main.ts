@@ -1,6 +1,6 @@
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import dayjs from "dayjs"
-import { findTimesheetEntries } from "./findTimesheetEntries"
+import { findTimesheetEntries } from "./findTimeViewEntries"
 import { markResults } from "./markValidationResults"
 import { validateEntries as validateTimesheet } from "./validateTimesheet"
 

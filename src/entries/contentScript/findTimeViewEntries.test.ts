@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import { findTimesheetEntries } from "./findTimesheetEntries"
+import { findTimesheetEntries } from "./findTimeViewEntries"
 
 beforeEach(() => {
   document.body.innerHTML = testPage

@@ -1,5 +1,6 @@
 import dayjs from "dayjs"
 import { TimesheetEntry } from "./TimesheetEntry"
+import { parseTime } from "./parseTime"
 
 function findTimesheetElement() {
   const element = document.getElementById("day-view-entries")
@@ -7,10 +8,6 @@ function findTimesheetElement() {
     throw new Error("Failed to find root element for timesheet")
   }
   return element
-}
-
-function parseTime(text: string) {
-  return dayjs(text, "HH:mm")
 }
 
 function findTextContent(tableRow: HTMLElement, selector: string) {

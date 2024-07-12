@@ -1,6 +1,6 @@
 import { Timesheet } from "./Timesheet"
 import { TimesheetEntry } from "./TimesheetEntry"
-import { TimesheetEntryGap, TimesheetEntryNote, ValidationResult } from "./ValidationResult"
+import { GapValidationResult, NoteValidationResult, ValidationResult } from "./ValidationResult"
 
 export function validateTimesheet(timesheet: Timesheet): ValidationResult[] {
   return timesheet.entries
@@ -8,7 +8,7 @@ export function validateTimesheet(timesheet: Timesheet): ValidationResult[] {
     .sort((a, b) => a.start.diff(b.start))
     .map((currentEntry, index, entries) => {
       const gap = validateGap(currentEntry, entries[index + 1])
-      const note: TimesheetEntryNote = currentEntry.hasNote ? { type: "ok" } : { type: "missing" }
+      const note = validateNote(currentEntry)
 
       return {
         entry: currentEntry,
@@ -18,7 +18,29 @@ export function validateTimesheet(timesheet: Timesheet): ValidationResult[] {
     })
 }
 
-function validateGap(firstEntry: TimesheetEntry, secondEntry?: TimesheetEntry): TimesheetEntryGap {
+const invalidTextRegex = RegExp(/[^\x00-\x7F]/gmu)
+
+function validateNote(entry: TimesheetEntry): NoteValidationResult {
+  if (entry.note === null || entry.note === "") {
+    return {
+      type: "missing",
+    }
+  }
+
+  const invalidText = entry.note?.match(invalidTextRegex)
+  if (invalidText) {
+    return {
+      type: "invalidCharacters",
+      invalidCharacters: invalidText,
+    }
+  }
+
+  return {
+    type: "ok",
+  }
+}
+
+function validateGap(firstEntry: TimesheetEntry, secondEntry?: TimesheetEntry): GapValidationResult {
   if (!secondEntry || !firstEntry.end) return { type: "ok" }
 
   const timeDiff = secondEntry.start.diff(firstEntry.end, "minutes")

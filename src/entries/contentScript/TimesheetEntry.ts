@@ -3,7 +3,7 @@ import { Dayjs } from "dayjs"
 export interface TimesheetEntry {
   start: Dayjs
   end: Dayjs
-  hasNote: boolean
+  note: string | null
   element: HTMLElement
   id: string
 }

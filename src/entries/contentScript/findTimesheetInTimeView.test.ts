@@ -42,16 +42,22 @@ describe("Timesheet Content", () => {
     expect(entries[1].end!.isSame(dayjs())).toBe(true)
   })
 
-  it("considers an entry to have a note if the div with class notes exists", () => {
-    const entries = findEntries()
-
-    expect(entries[0].hasNote).toBe(false)
-  })
-
   it("considers an entry to have no note if the div with class notes is missing", () => {
     const entries = findEntries()
 
-    expect(entries[1].hasNote).toBe(true)
-    expect(entries[2].hasNote).toBe(true)
+    expect(entries[0].note).toBe(null)
+  })
+
+  it("considers an entry to have a note if the div with class notes exists", () => {
+    const entries = findEntries()
+
+    expect(entries[1].note).not.toBe(null)
+    expect(entries[2].note).not.toBe(null)
+  })
+
+  it("extracts note correctly", () => {
+    const entries = findEntries()
+
+    expect(entries[1].note).toBe("Has Note")
   })
 })

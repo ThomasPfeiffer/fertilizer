@@ -1,26 +1,30 @@
 import { TimesheetEntry } from "./TimesheetEntry"
 
-export type ValidationResult = { entry: TimesheetEntry; gap: TimesheetEntryGap; note: TimesheetEntryNote }
+export type ValidationResult = { entry: TimesheetEntry; gap: GapValidationResult; note: NoteValidationResult }
 
-export type TimesheetEntryGap =
-  | TimesheetEntryOverlap
-  | TimesheetEntryBreak
-  | {
-      type: "ok"
-    }
+export type OkResult = {
+  type: "ok"
+}
 
-export type TimesheetEntryOverlap = {
+export type GapValidationResult = OverlapResult | BreakResult | OkResult
+
+export type OverlapResult = {
   type: "overlap"
   minutes: number
 }
 
-export type TimesheetEntryBreak = {
+export type BreakResult = {
   type: "break"
   minutes: number
 }
 
-export type TimesheetEntryNote =
-  | {
-      type: "missing"
-    }
-  | { type: "ok" }
+export type InvalidCharactersResult = {
+  type: "invalidCharacters"
+  invalidCharacters: string[]
+}
+
+export type NoteMissingResult = {
+  type: "missing"
+}
+
+export type NoteValidationResult = NoteMissingResult | InvalidCharactersResult | OkResult

@@ -5,10 +5,10 @@ export function markResults(results: ValidationResult[]) {
   results.forEach((result) => {
     switch (result.gap.type) {
       case "break":
-        markGap(result.entry, `${result.gap.minutes} Minuten Pause`, "rgb(142 223 142 / 37%)")
+        markGap(result.entry, `${result.gap.minutes} Minuten Pause`, "rgb(142 223 142 / 37%)", "↕")
         break
       case "overlap":
-        markGap(result.entry, `${result.gap.minutes} Minuten Überlappung`, "rgb(255 0 0 / 24%)")
+        markGap(result.entry, `${result.gap.minutes} Minuten Überlappung`, "rgb(255 0 0 / 24%)", "↕")
         break
       case "ok":
         unmarkGap(result.entry)
@@ -16,7 +16,10 @@ export function markResults(results: ValidationResult[]) {
     }
     switch (result.note.type) {
       case "missing":
-        markEntry(result.entry)
+        markEntry(result.entry, "rgb(166 166 166 / 25%)")
+        break
+      case "invalidCharacters":
+        markEntry(result.entry, "rgb(252 186 3 / 24%)")
         break
       case "ok":
         unmarkEntry(result.entry)
@@ -25,15 +28,15 @@ export function markResults(results: ValidationResult[]) {
   })
 }
 
-function markEntry(entry: TimesheetEntry) {
-  entry.element.style.backgroundColor = "rgb(166 166 166 / 25%)"
+function markEntry(entry: TimesheetEntry, color: string) {
+  entry.element.style.backgroundColor = color
 }
 
 function unmarkEntry(entry: TimesheetEntry) {
   entry.element.style.backgroundColor = ""
 }
 
-function markGap(entry: TimesheetEntry, text: string, color: string) {
+function markGap(entry: TimesheetEntry, text: string, color: string, icon: string) {
   if (hasGapMarking(entry)) {
     return
   }
@@ -41,6 +44,7 @@ function markGap(entry: TimesheetEntry, text: string, color: string) {
   const newRow = document.createElement("tr")
   newRow.setAttribute("colspan", "100%")
   newRow.setAttribute("id", idForGapMarking(entry))
+  newRow.style.borderBottom = "1px solid #bbbbbb"
 
   const newCell = document.createElement("td")
   newCell.setAttribute("colspan", "100%")
@@ -55,7 +59,7 @@ function markGap(entry: TimesheetEntry, text: string, color: string) {
 
   function createArrow() {
     const arrow = document.createElement("span")
-    arrow.textContent = "↕️"
+    arrow.textContent = icon
     return arrow
   }
 

@@ -21,8 +21,8 @@ function findTextContent(tableRow: HTMLElement, selector: string) {
 
 function readEntries(tableRow: HTMLElement): TimesheetEntry {
   const hasNote = tableRow.querySelector(".time-entry-notes") !== null
-
   const startTimeText = findTextContent(tableRow, ".start-time")
+  const noteText = hasNote ? findTextContent(tableRow, "p") : null
   const endTimeText = findTextContent(tableRow, ".end-time")
 
   const start = parseTime(startTimeText)
@@ -30,8 +30,8 @@ function readEntries(tableRow: HTMLElement): TimesheetEntry {
   const end = endToday.isBefore(start) ? endToday.add(1, "days") : endToday
 
   return {
-    hasNote,
     start: start,
+    note: noteText,
     end: end,
     element: tableRow,
     id: `FertilizerEntry${tableRow.id}`,
@@ -40,7 +40,6 @@ function readEntries(tableRow: HTMLElement): TimesheetEntry {
 
 export function findTimesheetsInTeamView(): Timesheet[] {
   const timesheetElements = findTimesheetElements()
-
   const timesheets = timesheetElements.map((timesheetElement) => {
     const tableRowElements = Array.from(timesheetElement.querySelectorAll<HTMLElement>("[data-analytics-day-entry-id]"))
 

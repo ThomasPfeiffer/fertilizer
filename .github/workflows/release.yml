@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js 18
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "18.2.0"
+          node-version: "22.3.0"
           cache: "npm"
       - run: npm ci
       - run: npm version ${{github.ref_name}} --allow-same-version true --git-tag-version false

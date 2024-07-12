@@ -1,7 +1,7 @@
 import pkg from "../package.json"
 
 const sharedManifest = {
-  author: pkg.author,
+  author: {email: pkg.author},
   description: pkg.description,
   name: pkg.displayName ?? pkg.name,
   version: pkg.version,

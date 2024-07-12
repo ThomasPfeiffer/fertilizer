@@ -5,10 +5,10 @@ export function markResults(results: ValidationResult[]) {
   results.forEach((result) => {
     switch (result.gap.type) {
       case "break":
-        markGap(result.entry, `${result.gap.minutes} Minuten Pause`, "rgb(142 223 142 / 37%)", "↕")
+        markGap(result.entry, `${result.gap.minutes} Minuten Pause`, "rgb(142 223 142 / 37%)")
         break
       case "overlap":
-        markGap(result.entry, `${result.gap.minutes} Minuten Überlappung`, "rgb(255 0 0 / 24%)", "↕")
+        markGap(result.entry, `${result.gap.minutes} Minuten Überlappung`, "rgb(255 0 0 / 24%)")
         break
       case "ok":
         unmarkGap(result.entry)
@@ -36,7 +36,7 @@ function unmarkEntry(entry: TimesheetEntry) {
   entry.element.style.backgroundColor = ""
 }
 
-function markGap(entry: TimesheetEntry, text: string, color: string, icon: string) {
+function markGap(entry: TimesheetEntry, text: string, color: string) {
   if (hasGapMarking(entry)) {
     return
   }
@@ -59,7 +59,7 @@ function markGap(entry: TimesheetEntry, text: string, color: string, icon: strin
 
   function createArrow() {
     const arrow = document.createElement("span")
-    arrow.textContent = icon
+    arrow.textContent = "↕"
     return arrow
   }
 

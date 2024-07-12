@@ -33,4 +33,9 @@ export const manifest: chrome.runtime.ManifestV3 = {
   },
   permissions: [],
   host_permissions: [],
-} 
+  browser_specific_settings: {
+    gecko: {
+      id: "{e7c40e74-3a6b-4c67-9e26-1c2f2435f9ad}",
+    },
+  },
+}

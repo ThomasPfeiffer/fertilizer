@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from "vite"
 import webExtension from "@samrum/vite-plugin-web-extension"
 import path from "path"
-import { getManifest } from "./src/manifest"
+import { manifest } from "./src/manifest"
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       webExtension({
-        manifest: getManifest(Number(env.MANIFEST_VERSION)),
+        manifest: manifest,
       }),
     ],
     resolve: {

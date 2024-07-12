@@ -18,6 +18,7 @@ jobs:
       - run: npm ci
       - run: npm version ${{github.ref_name}} --allow-same-version true --git-tag-version false
       - run: npm run build
+      - run: mkdir releases
       - name: Archive Release
         uses: thedoctor0/zip-release@main
         with:

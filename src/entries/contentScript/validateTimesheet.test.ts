@@ -103,19 +103,16 @@ describe("Order of timesheet entries", () => {
 })
 
 describe("Illegal Characters", () => {
-  it.each(["Chilling 😴", "🥸 Concentrated working 🥸", "😉", "ᏙᎥᎡᏌᏚ", "(⚆ₓ⚆)", "𒐫"])(
-    "Should return validation errors for notes with illegal characters",
-    (note) => {
-      const entry: TimesheetEntry = {
-        ...someEntry,
-        note,
-      }
-
-      const result = validateTimesheet({ entries: [entry] })
-
-      expect(result[0].note.type).toBe("invalidCharacters")
+  it.each(["Chilling 😴", "🥸 Concentrated working 🥸", "😉"])("Should return validation errors for note %s", (note) => {
+    const entry: TimesheetEntry = {
+      ...someEntry,
+      note,
     }
-  )
+
+    const result = validateTimesheet({ entries: [entry] })
+
+    expect(result[0].note.type).toBe("invalidCharacters")
+  })
 
   it.each([
     {
@@ -145,6 +142,17 @@ describe("Illegal Characters", () => {
     const entry: TimesheetEntry = {
       ...someEntry,
       note: "This is completely ok! \n Even with newlines",
+    }
+
+    const result = validateTimesheet({ entries: [entry] })
+
+    expect(result[0].note.type).not.toBe("invalidCharacters")
+  })
+
+  it("Allows Umlauts", () => {
+    const entry: TimesheetEntry = {
+      ...someEntry,
+      note: "Daß hier wäre auch voll ok",
     }
 
     const result = validateTimesheet({ entries: [entry] })

@@ -1,3 +1,4 @@
+import emojiRegex from "emoji-regex"
 import { Timesheet } from "./Timesheet"
 import { TimesheetEntry } from "./TimesheetEntry"
 import { GapValidationResult, NoteValidationResult, ValidationResult } from "./ValidationResult"
@@ -18,7 +19,7 @@ export function validateTimesheet(timesheet: Timesheet): ValidationResult[] {
     })
 }
 
-const invalidTextRegex = RegExp(/[^\x00-\x7F]/gmu)
+const invalidTextRegex = emojiRegex()
 
 function validateNote(entry: TimesheetEntry): NoteValidationResult {
   if (entry.note === null || entry.note === "") {

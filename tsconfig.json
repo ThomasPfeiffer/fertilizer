@@ -9,7 +9,7 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
@@ -21,7 +21,5 @@
     "skipLibCheck": true,
     "types": ["chrome", "jest", "node"]
   },
-  "include": [
-    "src/*"
-  ]
+  "include": ["src/**/*", "entrypoints/**/*", ".wxt/wxt.d.ts"]
 }

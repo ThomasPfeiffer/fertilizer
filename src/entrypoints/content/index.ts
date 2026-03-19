@@ -5,8 +5,13 @@ import { markResults } from "./markValidationResults"
 import { validateTimesheet } from "./validateTimesheet"
 import { findTimesheetsInTeamView } from "./findTimesheetsInTeamView"
 
-dayjs.extend(customParseFormat)
-initialize()
+export default defineContentScript({
+  matches: ["https://*.harvestapp.com/*"],
+  main: () => {
+    dayjs.extend(customParseFormat)
+    initialize()
+  },
+})
 
 function initialize() {
   try {

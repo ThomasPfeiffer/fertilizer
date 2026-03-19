@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import { parseTime } from "./parseTime"
 import { Timesheet } from "./Timesheet"
-import { TimesheetEntry } from "~/entries/contentScript/TimesheetEntry"
+import { TimesheetEntry } from "./TimesheetEntry"
 
 function findTimesheetElement() {
   const element = document.getElementById("day-view-entries")

@@ -19,7 +19,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "types": ["chrome", "jest", "node"]
+    "types": ["chrome", "vitest/globals", "node"]
   },
   "include": ["src/**/*", "entrypoints/**/*", ".wxt/wxt.d.ts"]
 }

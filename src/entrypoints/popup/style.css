@@ -1,0 +1,46 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  width: 280px;
+}
+
+#app {
+  padding: 16px;
+}
+
+.state-inactive {
+  color: #6b7280;
+}
+
+.state-inactive p {
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.state-inactive a {
+  color: #9ca3af;
+  text-decoration: underline;
+}
+
+.state-inactive a:hover {
+  color: #6b7280;
+}
+
+.state-active {
+  color: #1f2937;
+}
+
+.state-active p {
+  line-height: 1.5;
+}
+
+.warning-count {
+  font-weight: bold;
+  color: rgb(252 186 3);
+}

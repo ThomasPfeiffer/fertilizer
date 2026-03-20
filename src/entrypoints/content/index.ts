@@ -5,11 +5,19 @@ import { markResults } from "./markValidationResults"
 import { validateTimesheet } from "./validateTimesheet"
 import { findTimesheetsInTeamView } from "./findTimesheetsInTeamView"
 
+let latestWarningCount = 0
+
 export default defineContentScript({
   matches: ["https://*.harvestapp.com/*"],
   main: () => {
     dayjs.extend(customParseFormat)
     initialize()
+    browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+      if (message?.type === "GET_WARNING_COUNT") {
+        sendResponse({ warningCount: latestWarningCount })
+        return true
+      }
+    })
   },
 })
 
@@ -29,10 +37,15 @@ function initialize() {
 
 function onChange() {
   const timesheets = findTimeSheets()
+  let totalWarnings = 0
   timesheets.forEach((timesheet) => {
     const results = validateTimesheet(timesheet)
     markResults(results)
+    totalWarnings += results.filter(
+      (r) => r.gap.type !== "ok" || r.note.type !== "ok",
+    ).length
   })
+  latestWarningCount = totalWarnings
 }
 
 function findTimeSheets() {

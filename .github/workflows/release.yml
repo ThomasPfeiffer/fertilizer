@@ -9,23 +9,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "22.3.0"
-          cache: "npm"
-      - run: npm ci
-      - run: npm version ${{github.ref_name}} --allow-same-version true --git-tag-version false
-      - run: npm run build
-      - run: mkdir releases
-      - name: Archive Release
-        uses: thedoctor0/zip-release@main
-        with:
-          type: "zip"
-          filename: "../releases/${{github.ref_name}}-manifest-v3.zip"
-          directory: "dist"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: npm pkg set version=${{github.ref_name}}
+      - run: pnpm zip
+      - run: pnpm zip:firefox
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          files: "releases/*"
+          files: ".output/*.zip"

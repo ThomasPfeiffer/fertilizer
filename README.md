@@ -1,10 +1,16 @@
-# Fertilizer
+<div align="center">
 
-A browser extension for Chrome and Firefox that enhances the [Harvest](https://www.getharvest.com/) time-tracking UI. It highlights breaks, overlaps, and missing or invalid notes directly in the timesheet view.
+# <img align="top" width="250" src="src/assets/icon.svg" alt="Fertilizer Logo"> <br /> Fertilizer
+
+A browser extension for Chrome and Firefox that enhances the [Harvest](https://www.getharvest.com/) time-tracking UI.
+
+</div>
 
 ## What it does
 
-Fertilizer injects a content script into `*.harvestapp.com` and validates your timesheet entries on every page change:
+Fertilizer highlights breaks, overlaps, and missing or invalid notes directly in the timesheet view.
+
+To do so, it injects a content script into `*.harvestapp.com` and validates your timesheet entries on every page change:
 
 - **Breaks** — flags gaps of more than one minute between consecutive entries
 - **Overlaps** — flags entries that overlap by more than one minute

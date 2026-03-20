@@ -4,16 +4,16 @@ import { findTimesheetInTimeView } from "./findTimesheetInTimeView"
 import { markResults } from "./markValidationResults"
 import { validateTimesheet } from "./validateTimesheet"
 import { findTimesheetsInTeamView } from "./findTimesheetsInTeamView"
-import { onMessage } from "~/messaging"
+import { onMessage, EntryWarning } from "~/messaging"
 
-let latestWarningCount = 0
+let latestWarnings: EntryWarning[] = []
 
 export default defineContentScript({
   matches: ["https://*.harvestapp.com/*"],
   main: () => {
     dayjs.extend(customParseFormat)
     initialize()
-    onMessage("GET_WARNING_COUNT", () => ({ warningCount: latestWarningCount }))
+    onMessage("GET_WARNINGS", () => ({ warnings: latestWarnings }))
   },
 })
 
@@ -32,16 +32,17 @@ function initialize() {
 }
 
 function onChange() {
-  const timesheets = findTimeSheets()
-  let totalWarnings = 0
-  timesheets.forEach((timesheet) => {
+  const warnings: EntryWarning[] = []
+  findTimeSheets().forEach((timesheet) => {
     const results = validateTimesheet(timesheet)
     markResults(results)
-    totalWarnings += results.filter(
-      (r) => r.gap.type !== "ok" || r.note.type !== "ok",
-    ).length
+    for (const r of results) {
+      if (r.gap.type !== "ok" || r.note.type !== "ok") {
+        warnings.push({ startTime: r.entry.start.format("HH:mm"), gap: r.gap, note: r.note })
+      }
+    }
   })
-  latestWarningCount = totalWarnings
+  latestWarnings = warnings
 }
 
 function findTimeSheets() {

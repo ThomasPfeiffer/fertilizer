@@ -7,7 +7,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 16px;
-  width: 280px;
+  width: 400px;
   color: #1c2614;
 }
 
@@ -46,15 +46,52 @@ main {
   color: #6b7a55;
 }
 
+.state-loading,
+.state-inactive {
+  color: #6b7a55;
+}
+
+.state-ok p {
+  color: #4a7a3a;
+  font-weight: 500;
+}
+
 .state-active {
   color: #1c2614;
 }
 
-.state-active p {
-  line-height: 1.5;
+.warning-summary {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1c2614;
 }
 
-.warning-count {
-  font-weight: bold;
-  color: rgb(252 186 3);
+.warning-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.warning-item {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 6px;
+  border-left: 3px solid rgb(252 186 3);
+}
+
+.warning-time {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7a55;
+  white-space: nowrap;
+}
+
+.warning-messages {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #1c2614;
 }

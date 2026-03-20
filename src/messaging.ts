@@ -1,7 +1,15 @@
+import type { GapValidationResult, NoteValidationResult } from "~/entrypoints/content/ValidationResult"
+
+export type EntryWarning = {
+  startTime: string
+  gap: GapValidationResult
+  note: NoteValidationResult
+}
+
 interface Messages {
-  GET_WARNING_COUNT: {
+  GET_WARNINGS: {
     request: void
-    response: { warningCount: number }
+    response: { warnings: EntryWarning[] }
   }
 }
 

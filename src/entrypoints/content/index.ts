@@ -4,6 +4,7 @@ import { findTimesheetInTimeView } from "./findTimesheetInTimeView"
 import { markResults } from "./markValidationResults"
 import { validateTimesheet } from "./validateTimesheet"
 import { findTimesheetsInTeamView } from "./findTimesheetsInTeamView"
+import { onMessage } from "~/messaging"
 
 let latestWarningCount = 0
 
@@ -12,12 +13,7 @@ export default defineContentScript({
   main: () => {
     dayjs.extend(customParseFormat)
     initialize()
-    browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-      if (message?.type === "GET_WARNING_COUNT") {
-        sendResponse({ warningCount: latestWarningCount })
-        return true
-      }
-    })
+    onMessage("GET_WARNING_COUNT", () => ({ warningCount: latestWarningCount }))
   },
 })
 

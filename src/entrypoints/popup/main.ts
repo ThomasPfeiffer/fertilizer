@@ -1,3 +1,5 @@
+import { sendMessage } from "~/messaging"
+
 const app = document.getElementById("app")!
 
 async function init() {
@@ -5,51 +7,38 @@ async function init() {
   const url = tab?.url ?? ""
 
   if (!/harvestapp\.com/.test(url)) {
-    renderInactive(url)
+    renderInactive()
   } else {
-    let count: number | null = null
     try {
-      const response = await browser.tabs.sendMessage(tab.id!, {
-        type: "GET_WARNING_COUNT",
-      })
-      count = response?.warningCount ?? null
+      const response = await sendMessage(tab.id!, "GET_WARNING_COUNT")
+      const count = response?.warningCount ?? null
+      renderActive(count)
     } catch {
-      // content script not ready
+      renderLoading()
     }
-    renderActive(count)
   }
 }
 
-function renderInactive(url: string) {
-  let href = "https://harvestapp.com"
-  try {
-    const parsed = new URL(url)
-    const subdomain = parsed.hostname.match(/^(.+)\.harvestapp\.com$/)?.[1]
-    if (subdomain) {
-      href = `https://${subdomain}.harvestapp.com`
-    }
-  } catch {
-    // invalid URL, use default
-  }
-
+function renderInactive() {
   app.innerHTML = `
     <div class="state-inactive">
       <p>Fertilizer nicht aktiv, gehe auf dein Timesheet um es zu &uuml;berpr&uuml;fen</p>
-      <a href="${href}" target="_blank">${href}</a>
     </div>
   `
 }
 
-function renderActive(count: number | null) {
+function renderLoading() {
+  const text = "Fertilizer aktiv &mdash; Timesheet wird geladen&hellip;"
+  app.innerHTML = `<div class="state-active"><p>${text}</p></div>`
+}
+
+function renderActive(count: number) {
   let text: string
-  if (count === null) {
-    text = "Fertilizer aktiv &mdash; Timesheet wird geladen&hellip;"
-  } else if (count === 0) {
+  if (count === 0) {
     text = "Fertilizer aktiv &mdash; Keine Warnungen im aktuellen Timesheet"
   } else {
     text = `Fertilizer aktiv &mdash; <span class="warning-count">${count}</span> Warnung(en) im aktuellen Timesheet`
   }
-
   app.innerHTML = `<div class="state-active"><p>${text}</p></div>`
 }
 

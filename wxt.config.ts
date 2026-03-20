@@ -6,7 +6,6 @@ export default defineConfig({
   modules: ["@wxt-dev/auto-icons"],
   manifest: {
     name: "Fertilizer",
-    version: "0.0.1",
     description: "Web extension to enhance Harvest UI",
     browser_specific_settings: {
       gecko: {

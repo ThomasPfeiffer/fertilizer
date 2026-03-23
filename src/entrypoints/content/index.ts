@@ -7,13 +7,15 @@ import { findTimesheetsInTeamView } from "./findTimesheetsInTeamView"
 import { onMessage, EntryWarning } from "~/messaging"
 
 let latestWarnings: EntryWarning[] = []
+let latestEntryCount = 0
+let isActive = false
 
 export default defineContentScript({
   matches: ["https://*.harvestapp.com/*"],
   main: () => {
     dayjs.extend(customParseFormat)
     initialize()
-    onMessage("GET_WARNINGS", () => ({ warnings: latestWarnings }))
+    onMessage("GET_STATUS", () => ({ warnings: latestWarnings, entryCount: latestEntryCount, isActive }))
   },
 })
 
@@ -25,6 +27,7 @@ function initialize() {
       onChange()
     })
     observer.observe(document, config)
+    isActive = true
     console.log("Fertilizer active 🪴")
   } catch (e) {
     console.error("Fertilizer: ", e)
@@ -33,7 +36,9 @@ function initialize() {
 
 function onChange() {
   const warnings: EntryWarning[] = []
+  let entryCount = 0
   findTimeSheets().forEach((timesheet) => {
+    entryCount += timesheet.entries.length
     const results = validateTimesheet(timesheet)
     markResults(results)
     for (const r of results) {
@@ -43,6 +48,7 @@ function onChange() {
     }
   })
   latestWarnings = warnings
+  latestEntryCount = entryCount
 }
 
 function findTimeSheets() {

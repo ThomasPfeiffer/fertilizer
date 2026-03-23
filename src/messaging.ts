@@ -7,26 +7,21 @@ export type EntryWarning = {
 }
 
 interface Messages {
-  GET_WARNINGS: {
+  GET_STATUS: {
     request: void
-    response: { warnings: EntryWarning[] }
+    response: { warnings: EntryWarning[]; entryCount: number; isActive: boolean }
   }
 }
 
 type MessageType = keyof Messages
 type Response<T extends MessageType> = Messages[T]["response"]
 
-export function sendMessage<T extends MessageType>(
-  tabId: number,
-  type: T,
-): Promise<Response<T>> {
-  return browser.tabs.sendMessage(tabId, { type })
+export async function sendMessage<T extends MessageType>(type: T): Promise<Response<T>> {
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
+  return browser.tabs.sendMessage(tab.id!, { type })
 }
 
-export function onMessage<T extends MessageType>(
-  type: T,
-  handler: () => Response<T> | Promise<Response<T>>,
-): void {
+export function onMessage<T extends MessageType>(type: T, handler: () => Response<T> | Promise<Response<T>>): void {
   browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if ((message as Record<string, unknown>)?.type !== type) return true
     const result = handler()

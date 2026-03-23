@@ -6,92 +6,123 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 16px;
-  width: 400px;
+  font-size: 15px;
+  width: 340px;
   color: #1c2614;
+  background: #f7f9f4;
 }
 
 header {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 24px 8px;
-  border-bottom: 1px solid #d0d9c0;
+  padding: 14px 24px 12px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8d8;
 }
 
 header svg {
-  width: 80px;
+  width: 72px;
   height: auto;
 }
 
 main {
-  padding: 20px;
+  padding: 16px;
 }
 
-.state-inactive {
-  color: #6b7a55;
+/* Shared status layout */
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #d6ee00;
+  color: #1c2614;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.state-inactive p {
-  line-height: 1.5;
-  margin-bottom: 12px;
+.status-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c2614;
+  margin-bottom: 2px;
 }
 
-.state-inactive a {
+.status-meta {
+  font-size: 12px;
   color: #8a9e6a;
-  text-decoration: underline;
 }
 
-.state-inactive a:hover {
-  color: #6b7a55;
+/* State: ok */
+
+.state-ok {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e2e8d8;
 }
+
+/* State: inactive / loading */
 
 .state-loading,
 .state-inactive {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e2e8d8;
   color: #6b7a55;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-.state-ok p {
-  color: #4a7a3a;
-  font-weight: 500;
-}
+/* State: active (warnings) */
 
 .state-active {
-  color: #1c2614;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.warning-summary {
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #1c2614;
+.warning-header {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e2e8d8;
 }
 
 .warning-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .warning-item {
   display: flex;
   gap: 10px;
   align-items: baseline;
-  padding: 8px 10px;
+  padding: 9px 12px;
   background: #fff;
-  border-radius: 6px;
-  border-left: 3px solid rgb(252 186 3);
+  border-radius: 8px;
+  border: 1px solid #e2e8d8;
+  border-left: 3px solid #fcba03;
 }
 
 .warning-time {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: #6b7a55;
   white-space: nowrap;
+  min-width: 36px;
 }
 
 .warning-messages {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.4;
   color: #1c2614;
 }

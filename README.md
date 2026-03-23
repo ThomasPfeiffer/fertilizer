@@ -10,6 +10,13 @@ A browser extension for Chrome and Firefox that enhances the [Harvest](https://w
   <img src="screenshots/1.png" />
 </p>
 
+## Installation
+
+Fertilizer is available in both Webstores:
+
+- Chrome: https://chromewebstore.google.com/detail/fertilizer/ljgbpcpohdffeeeenlegejpgllbcocke
+- Firefox: https://addons.mozilla.org/en-US/firefox/addon/fertilizer/
+
 ## What it does
 
 Fertilizer highlights breaks, overlaps, and missing or invalid notes directly in the timesheet view.

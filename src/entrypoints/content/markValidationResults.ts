@@ -1,9 +1,9 @@
 import { TimesheetEntry } from "./TimesheetEntry"
 import { ValidationResult } from "./ValidationResult"
-import { lightPalette, Palette } from "./theme"
+import { currentPalette, Palette } from "./theme"
 
 export function markResults(results: ValidationResult[]) {
-  const palette = lightPalette
+  const palette = currentPalette()
   results.forEach((result) => {
     switch (result.gap.type) {
       case "break":
@@ -92,6 +92,7 @@ function markGap(entry: TimesheetEntry, text: string, color: string, palette: Pa
   markingElement.style.flex = "1"
   markingElement.style.textAlign = "center"
   markingElement.style.backgroundColor = "unset"
+  markingElement.style.color = "inherit"
   markingContainer.append(markingElement)
 
   markingContainer.append(createArrow())

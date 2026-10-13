@@ -23,6 +23,8 @@ On each change, the pipeline is:
    - **Note**: flags missing notes or notes containing emoji characters (via `emoji-regex` package, which supports Unicode/Umlauts)
 
 3. **Mark results** — `markValidationResults.ts` applies inline styles directly to the entry's `HTMLElement` and inserts/removes `<tr>` rows between entries to display gap/overlap indicators.
+Colors come from `theme.ts`, which picks a light or dark palette by checking the luminance of the page background (Harvest's dark mode), falling back to `prefers-color-scheme`. 
+Styles are only written when they change, so the `MutationObserver` doesn't loop.
 
 ## Key types
 
